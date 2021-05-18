@@ -14,14 +14,20 @@ const chunk = require(`lodash/chunk`)
 exports.createPages = async gatsbyUtilities => {
   // Query our posts from the GraphQL server
   const posts = await getPosts(gatsbyUtilities)
+  const categories = await getCategories(gatsbyUtilities)
+  const portfolios = await getPortfolio(gatsbyUtilities)
 
   // If there are no posts in WordPress, don't do anything
-  if (!posts.length) {
+  if (!posts.length && !categories.length) {
     return
   }
 
   // If there are posts, create pages for them
   await createIndividualBlogPostPages({ posts, gatsbyUtilities })
+
+  await createIndividualCategoryPages({ categories, gatsbyUtilities })
+
+  await createIndividualPortfolioPages({ portfolios, gatsbyUtilities })
 
   // And a paginated archive
   await createBlogPostArchive({ posts, gatsbyUtilities })
@@ -55,6 +61,56 @@ const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
           previousPostId: previous ? previous.id : null,
           nextPostId: next ? next.id : null,
         },
+      })
+    )
+  )
+
+  const createIndividualCategoryPages = async ({ categories, gatsbyUtilities }) =>
+  Promise.all(
+    categories.map(({ category }) =>
+      // createPage is an action passed to createPages
+      // See https://www.gatsbyjs.com/docs/actions#createPage for more info
+      gatsbyUtilities.actions.createPage({
+        // Use the WordPress uri as the Gatsby page path
+        // This is a good idea so that internal links and menus work 👍
+        path: `/realizacje/${category.slug}`,
+
+        // use the blog post template as the page component
+        component: path.resolve(`./src/templates/category.js`),
+
+        // `context` is available in the template as a prop and
+        // as a variable in GraphQL.
+        context: {
+          // we need to add the post id here
+          // so our blog post template knows which blog post
+          // the current page is (when you open it in a browser)
+          id: category.id
+        }
+      })
+    )
+  )
+
+  const createIndividualPortfolioPages = async ({ portfolios, gatsbyUtilities }) =>
+  Promise.all(
+    portfolios.map(({ portfolio }) =>
+      // createPage is an action passed to createPages
+      // See https://www.gatsbyjs.com/docs/actions#createPage for more info
+      gatsbyUtilities.actions.createPage({
+        // Use the WordPress uri as the Gatsby page path
+        // This is a good idea so that internal links and menus work 👍
+        path: `/realizacje/${portfolio.slug}`,
+
+        // use the blog post template as the page component
+        component: path.resolve(`./src/templates/portfolio.js`),
+
+        // `context` is available in the template as a prop and
+        // as a variable in GraphQL.
+        context: {
+          // we need to add the post id here
+          // so our blog post template knows which blog post
+          // the current page is (when you open it in a browser)
+          id: portfolio.id
+        }
       })
     )
   )
@@ -133,7 +189,9 @@ async function getPosts({ graphql, reporter }) {
   const graphqlResult = await graphql(/* GraphQL */ `
     query WpPosts {
       # Query all WordPress blog posts sorted by date
-      allWpPost(sort: { fields: [date], order: DESC }) {
+      allWpPost(
+        filter: {categories: {nodes: {elemMatch: {name: {in: "Blog"}}}}}
+        sort: { fields: [date], order: DESC }) {
         edges {
           previous {
             id
@@ -148,6 +206,58 @@ async function getPosts({ graphql, reporter }) {
 
           next {
             id
+          }
+        }
+      }
+    }
+  `)
+
+  if (graphqlResult.errors) {
+    reporter.panicOnBuild(
+      `There was an error loading your blog posts`,
+      graphqlResult.errors
+    )
+    return
+  }
+
+  return graphqlResult.data.allWpPost.edges
+}
+
+async function getCategories({ graphql, reporter }) {
+  const graphqlResult = await graphql(/* GraphQL */ `
+    query MyQuery {
+      allWpCategory {
+        edges {
+          category: node {
+            id
+            name
+            slug
+          }
+        }
+      }
+    }
+  `)
+
+  if (graphqlResult.errors) {
+    reporter.panicOnBuild(
+      `There was an error loading your blog posts`,
+      graphqlResult.errors
+    )
+    return
+  }
+
+  return graphqlResult.data.allWpCategory.edges
+}
+
+async function getPortfolio({ graphql, reporter }) {
+  const graphqlResult = await graphql(/* GraphQL */ `
+    query MyQuery {
+      allWpPost(filter: {categories: {nodes: {elemMatch: {name: {in: "Portfolio"}}}}}) {
+        edges {
+          portfolio: node {
+            id
+            title
+            slug
           }
         }
       }
