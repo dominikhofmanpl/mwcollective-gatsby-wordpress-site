@@ -1,26 +1,32 @@
 import React from 'react'
+import { Link } from 'react-scroll'
 import LogoMWC from '../images/logo.png'
 import Button from './button'
 
-const HeaderLabel = ({ pageTitle, pageDescription }) => {
+const HeaderLabel = ({ pageTitle, pageDescription, buttonLabel, location, slugaction }) => {
     return (
-    <div className="my-auto mx-auto">
+    <div className="my-auto mx-auto flex flex-col sm:p-8 md:p-0">
         <div className="grid grid-cols-2">
           <img src={LogoMWC} alt="Logo MWCollective" style={{
             width: `6rem`
           }}/>
-          <p className="inriasans-reg ml-auto my-auto">
+          <p className={`inriasans-reg ${location} my-auto`}>
             studio projektowe MWCollective
           </p>
         </div>
-        <h2 className="mont-black my-5" style={{
-          fontSize: `3rem`
-        }}>{pageTitle}</h2>
-        <p className="inriasans-reg my-5 pb-5 ml-auto" style={{
-          width: `20rem`
-        }}>
-        {pageDescription}
-        </p>
+        <div className="flex flex-col">
+          <h1 className={`mont-black ml-auto my-5 ${location}`} style={{
+            fontSize: `3rem`
+          }}>{pageTitle}</h1>
+          <p className={`inriasans-reg ml-auto my-5 pb-5 ${location}`} style={{
+            width: `20rem`
+          }}>
+          {pageDescription}
+          </p>
+          { buttonLabel ? <Button label={buttonLabel} 
+                  location={location}
+                  slugaction={slugaction}></Button> : null}
+        </div>
     </div>
     )
 }

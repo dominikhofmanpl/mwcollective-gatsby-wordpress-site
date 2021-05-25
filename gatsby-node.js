@@ -18,7 +18,7 @@ exports.createPages = async gatsbyUtilities => {
   const portfolios = await getPortfolio(gatsbyUtilities)
 
   // If there are no posts in WordPress, don't do anything
-  if (!posts.length && !categories.length) {
+  if (!posts.length && !categories.length && !portfolios.length) {
     return
   }
 
@@ -44,7 +44,7 @@ const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
       gatsbyUtilities.actions.createPage({
         // Use the WordPress uri as the Gatsby page path
         // This is a good idea so that internal links and menus work 👍
-        path: post.uri,
+        path: `/blog/${post.slug}`,
 
         // use the blog post template as the page component
         component: path.resolve(`./src/templates/blog-post.js`),
@@ -98,7 +98,7 @@ const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
       gatsbyUtilities.actions.createPage({
         // Use the WordPress uri as the Gatsby page path
         // This is a good idea so that internal links and menus work 👍
-        path: `/realizacje/${portfolio.slug}`,
+        path: `/portfolio/${portfolio.slug}`,
 
         // use the blog post template as the page component
         component: path.resolve(`./src/templates/portfolio.js`),
@@ -201,7 +201,7 @@ async function getPosts({ graphql, reporter }) {
           # We're doing this because this "node" is a post! It makes our code more readable further down the line.
           post: node {
             id
-            uri
+            slug
           }
 
           next {
@@ -251,12 +251,16 @@ async function getCategories({ graphql, reporter }) {
 
 async function getPortfolio({ graphql, reporter }) {
   const graphqlResult = await graphql(/* GraphQL */ `
-    query MyQuery {
-      allWpPost(filter: {categories: {nodes: {elemMatch: {name: {in: "Portfolio"}}}}}) {
+    query wpPortfolio {
+      # Query all WordPress blog posts sorted by date
+      allWpPost(
+        filter: {categories: {nodes: {elemMatch: {name: {in: "Portfolio"}}}}}
+        sort: { fields: [date], order: DESC }) {
         edges {
+          # note: this is a GraphQL alias. It renames "node" to "post" for this query
+          # We're doing this because this "node" is a post! It makes our code more readable further down the line.
           portfolio: node {
             id
-            title
             slug
           }
         }

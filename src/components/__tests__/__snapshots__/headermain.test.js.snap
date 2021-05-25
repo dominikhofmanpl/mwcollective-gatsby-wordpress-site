@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Index renders correctly 1`] = `
+<header
+  className="grid sm:grid-cols-1 lg:grid-cols-2 pt-32 md:pt-0 px-8 md:px-0"
+  style={
+    Object {
+      "minHeight": "70vh",
+      "overflowX": "hidden",
+      "width": "100vw",
+    }
+  }
+>
+  <div
+    className="hidden lg:block"
+    style={
+      Object {
+        "backgroundImage": "url([object Object])",
+        "backgroundSize": "cover",
+        "height": "70vh",
+        "width": "100%",
+      }
+    }
+  />
+  <div
+    className="text-right flex flex-col"
+    data-aos="fade-left"
+    style={
+      Object {
+        "height": "70vh",
+        "width": "100%",
+      }
+    }
+  >
+    <div
+      className="my-auto mx-auto flex flex-col sm:p-8 md:p-0"
+    >
+      <div
+        className="grid grid-cols-2"
+      >
+        <img
+          alt="Logo MWCollective"
+          src="test-file-stub"
+          style={
+            Object {
+              "width": "6rem",
+            }
+          }
+        />
+        <p
+          className="inriasans-reg undefined my-auto"
+        >
+          studio projektowe MWCollective
+        </p>
+      </div>
+      <h2
+        className="mont-black my-5 undefined"
+        style={
+          Object {
+            "fontSize": "3rem",
+          }
+        }
+      >
+        mniej znaczy więcej
+      </h2>
+      <p
+        className="inriasans-reg my-5 pb-5 undefined"
+        style={
+          Object {
+            "width": "20rem",
+          }
+        }
+      >
+        testowy opis
+      </p>
+    </div>
+  </div>
+</header>
+`;

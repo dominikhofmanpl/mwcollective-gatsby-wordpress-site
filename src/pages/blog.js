@@ -4,6 +4,7 @@ import { gql, useQuery } from '@apollo/client'
 import WorkersBox from '../components/aboutpage/workers'
 import BlogPostsBox from '../components/blog/blogposts'
 import Layout from '../components/layout'
+import Loading from '../components/loading'
 
 const GET_HEADER_PAGE = `
     subpageFields {
@@ -25,7 +26,7 @@ const GET_PAGE_INDEX = gql`
 const Blog = () => {
     const { data, loading, error } = useQuery(GET_PAGE_INDEX)
 
-    if (loading) return 'Loading...'
+    if (loading) return <Loading></Loading>
     if (error) return 'Data error'
 
     return (

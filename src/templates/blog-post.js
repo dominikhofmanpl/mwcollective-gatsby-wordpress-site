@@ -24,13 +24,13 @@ const BlogPostTemplate = ({ data: { previous, next, post } }) => {
       >
         <HeaderMain 
             height="75vh"
-            // HeaderImage={data.pageBy.subpageFields.subpageCover.sourceUrl}
+            HeaderImage={post.cover_blog_post.coverBlogPost.sourceUrl}
             pageTitle={parse(post.title)}
             pageDescription={post.excerpt}>               
         </HeaderMain>
 
         {!!post.blogtext.blogContent && (
-          <section itemProp="articleBody" className="px-36 py-8">{ReactHtmlParser(post.blogtext.blogContent)}</section>
+          <section itemProp="articleBody" className="px-4 md:px-16 lg:px-36 py-8">{ReactHtmlParser(`${post.blogtext.blogContent}`)}</section>
         )}
 
         <hr />
@@ -47,7 +47,7 @@ const BlogPostTemplate = ({ data: { previous, next, post } }) => {
         >
           <li>
             {previous && (
-              <Link to={previous.uri} rel="prev">
+              <Link to={`/blog/${previous.slug}`} rel="prev">
                 ← {parse(previous.title)}
               </Link>
             )}
@@ -55,7 +55,7 @@ const BlogPostTemplate = ({ data: { previous, next, post } }) => {
 
           <li>
             {next && (
-              <Link to={next.uri} rel="next">
+              <Link to={`/blog/${next.slug}`} rel="next">
                 {parse(next.title)} →
               </Link>
             )}
@@ -85,29 +85,22 @@ export const pageQuery = graphql`
       }
       excerpt
       date(formatString: "MMMM DD, YYYY")
-      featuredImage {
-        node {
-          altText
-          localFile {
-            childImageSharp {
-              fluid(maxWidth: 1000, quality: 100) {
-                ...GatsbyImageSharpFluid_tracedSVG
-              }
-            }
-          }
+      cover_blog_post {
+        coverBlogPost {
+          sourceUrl
         }
       }
     }
 
     # this gets us the previous post by id (if it exists)
     previous: wpPost(id: { eq: $previousPostId }) {
-      uri
+      slug
       title
     }
 
     # this gets us the next post by id (if it exists)
     next: wpPost(id: { eq: $nextPostId }) {
-      uri
+      slug
       title
     }
   }

@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Service renders correctly 1`] = `
+<div
+  className="flex flex-col py-4 md:mr-4"
+>
+  <img
+    alt=""
+    className="my-3"
+    src={
+      Object {
+        "sourceUrl": "test-file-stub",
+      }
+    }
+    srcset=""
+    style={
+      Object {
+        "width": "4rem",
+      }
+    }
+  />
+  <h3
+    className="mont-semi my-1"
+  >
+    Wnętrza
+  </h3>
+  <p
+    className="inriasans-reg my-3"
+  >
+    Nunc porta diam ex, vel laoreet nisl placerat sit amet. Praesent pulvinar auctor nisi, sodales consequat arcu tincidunt id. Phasellus condimentum nunc in lectus lacinia rutrum id eu lorem.
+  </p>
+</div>
+`;

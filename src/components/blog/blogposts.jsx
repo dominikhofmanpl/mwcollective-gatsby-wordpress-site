@@ -5,7 +5,7 @@ import ReactHtmlParser, {  } from 'react-html-parser'
 
 const GET_BLOG_POSTS = gql`
     query MyQuery {
-  posts {
+  posts(where: {categoryName: "Blog"}) {
     nodes {
       id
       title
@@ -15,7 +15,7 @@ const GET_BLOG_POSTS = gql`
           name
         }
       }
-      uri
+      slug
       date
       cover_blog_post {
         coverBlogPost {
@@ -34,7 +34,7 @@ const BlogPostsBox = () => {
     if (error) return 'Error...'
 
     return (
-        <div className="container px-24 py-16">
+        <div className="container py-4 lg:py-16 px-12 lg:px-24">
             {data.posts.nodes.map(node => (
                 <BlogPost
                     key={node.id}
@@ -42,7 +42,7 @@ const BlogPostsBox = () => {
                     description={ReactHtmlParser(node.excerpt)}
                     addedBy={node.author.node.name}
                     dateRelease={node.date}
-                    bloghref={node.uri}
+                    bloghref={node.slug}
                     aboutimage={node.cover_blog_post.coverBlogPost.sourceUrl}>
                 </BlogPost>
             ))}

@@ -1,43 +1,48 @@
-import React from 'react'
-import HeaderMain from '../components/headermain'
-import Layout from '../components/layout'
-import Seo from '../components/seo'
+import React from "react"
+import { Link, graphql } from "gatsby"
+import parse from "html-react-parser"
 import ReactHtmlParser, {  } from 'react-html-parser'
-import { graphql } from 'gatsby'
 
-const Portfolio = ({ data: { portfolio }}) => {
-    return (
-        <Layout>
-            <Seo title={portfolio.title}></Seo>
-            <article
-                className="blog-post"
-                itemScope
-                itemType="http://schema.org/Article"
-            >
-                <HeaderMain 
-                    height="75vh"
-                    // HeaderImage={data.pageBy.subpageFields.subpageCover.sourceUrl}
-                    pageTitle={ReactHtmlParser(portfolio.title)}>               
-                </HeaderMain>
-            </article>
-        </Layout>
-    )
+import Layout from "../components/layout"
+import Seo from "../components/seo"
+import HeaderMain from "../components/headermain"
+
+const PortfolioTemplate = ({ data: { portfolio } }) => {
+
+  return (
+    <Layout>
+      <Seo title={portfolio.title}/>
+      <HeaderMain 
+          height="75vh"
+          HeaderImage={portfolio.cover_blog_post.coverBlogPost.sourceUrl}
+          pageTitle={parse(portfolio.title)}>               
+      </HeaderMain>
+        {!!portfolio.blogtext.blogContent && (
+          <section itemProp="articleBody" className="px-4 md:px-16 lg:px-36 py-8">{ReactHtmlParser(portfolio.blogtext.blogContent)}</section>
+        )}
+    </Layout>
+  )
 }
 
-export default Portfolio
+export default PortfolioTemplate
 
-export const portfolioQuery = graphql`
-  query portfolioQueryWP (
+export const pageQuery = graphql`
+  query PortfolioById(
     # these variables are passed in via createPage.pageContext in gatsby-node.js
     $id: String!
   ) {
     # selecting the current post by id
-    portfolio:  wpPost(
-        categories: {nodes: {elemMatch: {name: {in: "Portfolio"}}}}
-        id: {eq: $id}
-    ) {
-        id
-        title
+    portfolio: wpPost(id: { eq: $id }) {
+      id
+      title
+      cover_blog_post {
+        coverBlogPost {
+          sourceUrl
+        }
+      }
+      blogtext {
+        blogContent
+      }
     }
   }
 `
